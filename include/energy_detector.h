@@ -20,4 +20,7 @@ size_t compute_block_energy(const int16_t *samples, size_t num_samples,
 // Aplica un prag fix pe energie ca sa marcheze is_voice in fiecare bloc
 void apply_threshold(BlockResult *results, size_t num_blocks, double threshold);
 
+// Versiune NEON (ARM SIMD) a compute_block_energy
+size_t compute_block_energy_neon(const int16_t *samples, size_t num_samples,
+                                  size_t block_size, BlockResult *results);
 #endif
