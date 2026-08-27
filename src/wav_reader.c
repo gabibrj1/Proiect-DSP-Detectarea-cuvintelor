@@ -5,14 +5,14 @@
 
 static uint32_t read_u32(FILE *f) {
     unsigned char b[4];
-    fread(b, 1, 4, f);
+    if (fread(b, 1, 4, f) != 4) return 0;
     return (uint32_t)b[0] | ((uint32_t)b[1] << 8) |
            ((uint32_t)b[2] << 16) | ((uint32_t)b[3] << 24);
 }
 
 static uint16_t read_u16(FILE *f) {
     unsigned char b[2];
-    fread(b, 1, 2, f);
+    if (fread(b, 1, 2, f) != 2) return 0;
     return (uint16_t)b[0] | ((uint16_t)b[1] << 8);
 }
 
@@ -24,14 +24,14 @@ int wav_read(const char *filename, WavAudio *out) {
     }
 
     char chunk_id[5] = {0};
-    fread(chunk_id, 1, 4, f);
+    if (fread(chunk_id, 1, 4, f) != 4) { fclose(f); return -1; }
     if (strcmp(chunk_id, "RIFF") != 0) {
         fprintf(stderr, "Eroare: fisier nu are header RIFF valid\n");
         fclose(f);
         return -1;
     }
     read_u32(f); // dimensiune fisier - 8, ignorat
-    fread(chunk_id, 1, 4, f);
+    if (fread(chunk_id, 1, 4, f) != 4) { fclose(f); return -1; }
     if (strcmp(chunk_id, "WAVE") != 0) {
         fprintf(stderr, "Eroare: nu e format WAVE\n");
         fclose(f);
