@@ -8,6 +8,7 @@ typedef struct {
     size_t block_index;
     double energy;      // suma patratelor esantioanelor din bloc, normalizata
     int is_voice;        // 1 = voce/activ, 0 = tacere
+    double zcr;        // zero-crossing rate normalizat (0.0 - 1.0)
 } BlockResult;
 
 // Calculeaza energia pe blocuri de dimensiune fixa (block_size esantioane)
@@ -23,4 +24,10 @@ void apply_threshold(BlockResult *results, size_t num_blocks, double threshold);
 // Versiune NEON (ARM SIMD) a compute_block_energy
 size_t compute_block_energy_neon(const int16_t *samples, size_t num_samples,
                                   size_t block_size, BlockResult *results);
+
+// Calculeaza zero-crossing rate (ZCR) pentru fiecare bloc
+// ZCR = de cate ori semnul esantioanelor se schimba intre doi vecini consecutivi, normalizat la numarul de esantioane din bloc
+// adaugam doar campul zcr peste ce exista deja
+
+void compute_block_zcr(const int16_t *samples, size_t num_samples, size_t block_size, BlockResult *results);
 #endif
