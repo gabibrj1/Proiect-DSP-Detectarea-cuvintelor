@@ -16,11 +16,20 @@ int main(void) {
     int16_t *samples = malloc(num_samples * sizeof(int16_t));
     for (uint32_t i = 0; i < num_samples; i++) {
         double t = (double)i / sample_rate;
-        if (t < 1.0 || t >= 2.0) {
-            // ton 440 Hz, amplitudine moderata
+        if (t < 0.5) {
+            // zgomot de fond slab la inceput (0-0.5s), simuleaza
+            // liniste ambientala, nu tacere perfecta - pragul
+            // adaptiv are nevoie de ceva zgomot real ca sa functioneze
+            samples[i] = (int16_t)((rand() % 200) - 100);
+        } else if (t < 1.5) {
+            // ton 440 Hz, amplitudine moderata (0.5s - 1.5s)
             samples[i] = (int16_t)(8000.0 * sin(2.0 * M_PI * 440.0 * t));
+        } else if (t < 2.0) {
+            // tacere/zgomot slab din nou (1.5s - 2.0s)
+            samples[i] = (int16_t)((rand() % 200) - 100);
         } else {
-            samples[i] = 0; // tacere intre secunda 1 si 2
+            // al doilea ton (2.0s - 3.0s)
+            samples[i] = (int16_t)(8000.0 * sin(2.0 * M_PI * 440.0 * t));
         }
     }
 
