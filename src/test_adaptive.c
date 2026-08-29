@@ -3,9 +3,10 @@
 #include "wav_reader.h"
 #include "energy_detector.h"
 
-int main(void) {
+int main(int argc, char *argv[]) {
     WavAudio audio;
-    if (wav_read("data/test_tone.wav", &audio) != 0) {
+    const char *filename = (argc > 1) ? argv[1] : "data/test_tone.wav";
+    if (wav_read(filename, &audio) != 0) {
         fprintf(stderr, "Citire esuata\n");
         return 1;
     }
@@ -21,11 +22,11 @@ int main(void) {
     // direct cu ton, nu cu tacere), dar pe audio real cu tacere la
     // inceput asta functioneaza corect. pastram testul ca sa vedem
     // mecanismul in actiune, chiar daca pragul rezultat nu e ideal aici
-    double threshold = compute_adaptive_threshold(results, num_blocks, 10, 3.0);
+    double threshold = compute_adaptive_threshold(results, num_blocks, 10, 4.0);
     printf("Prag adaptiv calculat: %.2f\n\n", threshold);
 
     // hangover de 5 blocuri = 100ms la block_size 320 / 16000Hz
-    apply_adaptive_threshold(results, num_blocks, threshold, 5);
+    apply_adaptive_threshold(results, num_blocks, threshold, 15);
 
     int prev_voice = -1;
     for (size_t b = 0; b < num_blocks; b++) {
