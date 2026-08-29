@@ -30,4 +30,16 @@ size_t compute_block_energy_neon(const int16_t *samples, size_t num_samples,
 // adaugam doar campul zcr peste ce exista deja
 
 void compute_block_zcr(const int16_t *samples, size_t num_samples, size_t block_size, BlockResult *results);
+
+// calculeaza un prag adaptiv de energie pe baza nivelului de zgomot de fond estimat din primele "noise_blocks" blocuri
+// presupunem ca semnalul incepe cu tacere/zgomot ambiental
+// factor controleaza cat de sus fata de zgomotul de fond trebuie sa fie energia ca sa fie considerata voce
+
+double compute_adaptive_threshold(const BlockResult *results, size_t num_blocks, size_t noise_blocks, double factor);
+
+// aplica decizia finala voce/tacere folosind prag adaptiv + hangover
+// hangover_blocks = cate blocuri tinem starea VOCE dupa ce energia scade sub prag, ca sa nu taiem prematur sfarsitul cuvintelor
+
+void apply_adaptive_threshold(BlockResult *results, size_t num_blocks, double threshold, size_t hangover_blocks);
+
 #endif
